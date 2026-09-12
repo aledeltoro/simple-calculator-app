@@ -10,6 +10,7 @@ import (
 	"github.com/aledeltoro/simple-calculator-app/internal/models"
 )
 
+// Evaluate traverses an AST to parse each expression and evaluate them into a final result
 func Evaluate(expression ast.Expr) (float64, error) {
 	switch expression := expression.(type) {
 	case *ast.BinaryExpr:

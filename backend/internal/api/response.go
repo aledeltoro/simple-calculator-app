@@ -7,6 +7,7 @@ import (
 	"github.com/aledeltoro/simple-calculator-app/internal/models"
 )
 
+// WriteJSONResponse function to encode a JSON response
 func WriteJSONResponse(w http.ResponseWriter, statusCode int, value any) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -19,6 +20,7 @@ func WriteJSONResponse(w http.ResponseWriter, statusCode int, value any) {
 	}
 }
 
+// WriteErrorResponse function to encode a JSON error response
 func WriteErrorResponse(w http.ResponseWriter, err error) {
 	switch err {
 	case models.ErrExpressionParsingFailed, models.ErrUnsupportedMathOperation, models.ErrRequestParseFailed, models.ErrDivisionByZero, models.ErrComplexNumberCalculationsNotSupported, models.ErrEmptyExpression:

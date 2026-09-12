@@ -1,3 +1,4 @@
+// Package handler implements the controller layer for the API
 package handler
 
 import (
@@ -9,6 +10,7 @@ import (
 	"github.com/aledeltoro/simple-calculator-app/internal/service"
 )
 
+// Handler interface to handle implementation of controller layer
 type Handler interface {
 	HandleCalculate() http.HandlerFunc
 }
@@ -17,12 +19,14 @@ type handler struct {
 	service service.CalculatorService
 }
 
+// NewHandler constructor for controller layer
 func NewHandler(service service.CalculatorService) Handler {
 	return handler{
 		service: service,
 	}
 }
 
+// HandleCalculate controller for POST /calculations endpoint
 func (h handler) HandleCalculate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req models.CalculateRequest
