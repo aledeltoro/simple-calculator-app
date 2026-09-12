@@ -9,9 +9,14 @@ import (
 
 func WriteJSONResponse(w http.ResponseWriter, statusCode int, value any) {
 	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
 
-	_ = json.NewEncoder(w).Encode(value)
+	if statusCode != http.StatusOK {
+		w.WriteHeader(statusCode)
+	}
+
+	if err := json.NewEncoder(w).Encode(value); err != nil {
+		WriteErrorResponse(w, err)
+	}
 }
 
 func WriteErrorResponse(w http.ResponseWriter, err error) {
