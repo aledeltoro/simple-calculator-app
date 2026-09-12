@@ -18,6 +18,10 @@ type APIErr struct {
 	err        error
 }
 
+func (e APIErr) Unwrap() error {
+	return e.err
+}
+
 func NewInternalServerError(err error) APIErr {
 	apiErr := APIErr{
 		ErrCode:    ErrCodeInternalServerError,

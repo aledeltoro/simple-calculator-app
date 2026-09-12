@@ -73,6 +73,11 @@ func TestWriteErrorResponse(t *testing.T) {
 			expectedStatusCode: http.StatusInternalServerError,
 			expectedResponse:   NewInternalServerError(models.ErrUnsupportedExpressionFound),
 		},
+		"unknown error": {
+			input:              errors.New("unknown error"),
+			expectedStatusCode: http.StatusInternalServerError,
+			expectedResponse:   NewInternalServerError(errors.New("unknown error")),
+		},
 	}
 
 	for name, testCase := range tests {
