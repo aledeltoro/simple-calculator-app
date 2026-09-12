@@ -4,6 +4,8 @@ package service
 import (
 	"errors"
 	"go/parser"
+
+	"github.com/aledeltoro/simple-calculator-app/internal/evaluation"
 )
 
 var (
@@ -24,10 +26,10 @@ func NewCalculatorService() CalculatorService {
 }
 
 func (c calculatorService) Calculate(rawExpression string) (float64, error) {
-	_, err := parser.ParseExpr(rawExpression)
+	expression, err := parser.ParseExpr(rawExpression)
 	if err != nil {
 		return 0, ErrExpressionParsingFailed
 	}
 
-	return 0, nil
+	return evaluation.Evaluate(expression)
 }
