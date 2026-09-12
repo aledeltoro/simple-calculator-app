@@ -15,4 +15,6 @@ var (
 	ErrDivisionByZero = errors.New("division by zero not allowed")
 	// ErrComplexNumberCalculationsNotSupported
 	ErrComplexNumberCalculationsNotSupported = errors.New("calculations resulting in complex numbers are not supported")
+	// ErrEmptyExpression error when input is empty
+	ErrEmptyExpression = errors.New("empty expression")
 )

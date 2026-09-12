@@ -20,7 +20,12 @@ func NewCalculatorService() CalculatorService {
 	return calculatorService{}
 }
 
+// Calculate parses and evaluates a mathematical expression
 func (c calculatorService) Calculate(rawExpression string) (float64, error) {
+	if rawExpression == "" {
+		return 0, models.ErrEmptyExpression
+	}
+
 	expression, err := parser.ParseExpr(rawExpression)
 	if err != nil {
 		return 0, models.ErrExpressionParsingFailed

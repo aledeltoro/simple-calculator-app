@@ -21,6 +21,10 @@ func TestCalculate(t *testing.T) {
 			input: "√4",
 			err:   models.ErrExpressionParsingFailed,
 		},
+		"empty expression": {
+			input: "",
+			err:   models.ErrEmptyExpression,
+		},
 	}
 
 	for name, testCase := range tests {
