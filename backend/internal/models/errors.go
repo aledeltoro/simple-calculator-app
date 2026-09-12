@@ -9,4 +9,6 @@ var (
 	ErrUnsupportedExpressionFound = errors.New("unsupported expression found")
 	// ErrUnsupportedMathOperation error when mathematical operation is not supported
 	ErrUnsupportedMathOperation = errors.New("unsupported mathematical operation")
+	// ErrRequestParseFailed error when handler fails to decode JSON request
+	ErrRequestParseFailed = errors.New("failed to parse request")
 )

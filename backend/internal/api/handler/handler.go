@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/aledeltoro/simple-calculator-app/internal/api"
 	"github.com/aledeltoro/simple-calculator-app/internal/models"
 	"github.com/aledeltoro/simple-calculator-app/internal/service"
 )
@@ -28,26 +29,20 @@ func (h handler) HandleCalculate() http.HandlerFunc {
 
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			api.WriteErrorResponse(w, models.ErrRequestParseFailed)
 			return
 		}
 
 		result, err := h.service.Calculate(req.Expression)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			api.WriteErrorResponse(w, err)
 			return
 		}
-
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
 
 		response := models.CalculateResponse{
 			Result: result,
 		}
 
-		err = json.NewEncoder(w).Encode(response)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		api.WriteJSONResponse(w, http.StatusOK, response)
 	}
 }
