@@ -3,6 +3,7 @@ package service
 import (
 	"testing"
 
+	"github.com/aledeltoro/simple-calculator-app/internal/models"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,7 +19,7 @@ func TestCalculate(t *testing.T) {
 		},
 		"expression parsing failed": {
 			input: "√4",
-			err:   ErrExpressionParsingFailed,
+			err:   models.ErrExpressionParsingFailed,
 		},
 	}
 

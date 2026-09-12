@@ -2,15 +2,10 @@
 package service
 
 import (
-	"errors"
 	"go/parser"
 
 	"github.com/aledeltoro/simple-calculator-app/internal/evaluation"
-)
-
-var (
-	// ErrExpressionParsingFailed error when parsing of expression to an Abstract Syntax Tree failed
-	ErrExpressionParsingFailed = errors.New("expression parsing failed")
+	"github.com/aledeltoro/simple-calculator-app/internal/models"
 )
 
 // CalculatorService interface to implement service that parses and evalutes mathematical expressions
@@ -28,7 +23,7 @@ func NewCalculatorService() CalculatorService {
 func (c calculatorService) Calculate(rawExpression string) (float64, error) {
 	expression, err := parser.ParseExpr(rawExpression)
 	if err != nil {
-		return 0, ErrExpressionParsingFailed
+		return 0, models.ErrExpressionParsingFailed
 	}
 
 	return evaluation.Evaluate(expression)

@@ -4,6 +4,7 @@ import (
 	"go/parser"
 	"testing"
 
+	"github.com/aledeltoro/simple-calculator-app/internal/models"
 	"github.com/stretchr/testify/require"
 )
 
@@ -44,11 +45,11 @@ func TestEvaluate(t *testing.T) {
 			},
 			"unsupported operation error": {
 				input: "5 % 2",
-				err:   ErrUnsupportedMathOperation,
+				err:   models.ErrUnsupportedMathOperation,
 			},
 			"unsupported expression error": {
 				input: "a[1]",
-				err:   ErrUnsupportedExpressionFound,
+				err:   models.ErrUnsupportedExpressionFound,
 			},
 		}
 

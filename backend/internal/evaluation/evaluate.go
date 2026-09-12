@@ -2,16 +2,12 @@
 package evaluation
 
 import (
-	"errors"
 	"go/ast"
 	"go/token"
 	"math"
 	"strconv"
-)
 
-var (
-	ErrUnsupportedExpressionFound = errors.New("unsupported expression found")
-	ErrUnsupportedMathOperation   = errors.New("unsupported mathematical operation")
+	"github.com/aledeltoro/simple-calculator-app/internal/models"
 )
 
 func Evaluate(expression ast.Expr) (float64, error) {
@@ -28,7 +24,7 @@ func Evaluate(expression ast.Expr) (float64, error) {
 		return Evaluate(expression.X)
 	}
 
-	return 0, ErrUnsupportedExpressionFound
+	return 0, models.ErrUnsupportedExpressionFound
 }
 
 func evaluateBinaryExpression(expression *ast.BinaryExpr) (float64, error) {
@@ -59,5 +55,5 @@ func evaluateBinaryExpression(expression *ast.BinaryExpr) (float64, error) {
 		return math.Pow(leftNode, rightNode), nil
 	}
 
-	return 0, ErrUnsupportedMathOperation
+	return 0, models.ErrUnsupportedMathOperation
 }
