@@ -51,6 +51,18 @@ func TestEvaluate(t *testing.T) {
 				input: "a[1]",
 				err:   models.ErrUnsupportedExpressionFound,
 			},
+			"negative numbers": {
+				input:  "-9 + 1",
+				output: -8,
+			},
+			"division by zero error": {
+				input: "5 / 0",
+				err:   models.ErrDivisionByZero,
+			},
+			"negative square root error": {
+				input: "-9^0.5",
+				err:   models.ErrComplexNumberCalculationsNotSupported,
+			},
 		}
 
 		for name, testCase := range tests {
