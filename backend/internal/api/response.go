@@ -16,7 +16,7 @@ func WriteJSONResponse(w http.ResponseWriter, statusCode int, value any) {
 
 func WriteErrorResponse(w http.ResponseWriter, err error) {
 	switch err {
-	case models.ErrExpressionParsingFailed, models.ErrUnsupportedMathOperation, models.ErrRequestParseFailed:
+	case models.ErrExpressionParsingFailed, models.ErrUnsupportedMathOperation, models.ErrRequestParseFailed, models.ErrDivisionByZero, models.ErrComplexNumberCalculationsNotSupported:
 		WriteJSONResponse(w, http.StatusBadRequest, NewBadRequestError(err))
 	case models.ErrUnsupportedExpressionFound:
 		WriteJSONResponse(w, http.StatusInternalServerError, NewInternalServerError(err))

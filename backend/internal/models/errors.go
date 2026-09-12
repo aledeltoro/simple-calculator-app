@@ -11,4 +11,8 @@ var (
 	ErrUnsupportedMathOperation = errors.New("unsupported mathematical operation")
 	// ErrRequestParseFailed error when handler fails to decode JSON request
 	ErrRequestParseFailed = errors.New("failed to parse request")
+	// ErrDivisionByZero error when divisor is zero
+	ErrDivisionByZero = errors.New("division by zero not allowed")
+	// ErrComplexNumberCalculationsNotSupported
+	ErrComplexNumberCalculationsNotSupported = errors.New("calculations resulting in complex numbers are not supported")
 )
