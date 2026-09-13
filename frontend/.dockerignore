@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Test coverage
+coverage/
+
+# Environment files (VITE_API_BASE_URL is passed via build ARG)
+.env
+.env.*
+
+# VCS
+.git
+.gitignore
+
+# Logs
+*.log
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
