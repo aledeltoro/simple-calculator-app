@@ -173,6 +173,20 @@ Tests use `httptest.NewRecorder` and `httptest.NewRequest` for HTTP layer tests.
 Handler tests wire a real chi router and real service (not mocked) to verify the
 full integration within the handler boundary.
 
+## Coverage
+
+Excludes `cmd/api/main.go` (wiring-only entry point, not unit-tested).
+Run `./scripts/coverage.sh` from `backend/` to regenerate.
+
+| Package | Coverage |
+|---|---|
+| `internal/api/handler` | 100.0% |
+| `internal/service` | 100.0% |
+| `internal/api` | 94.1% |
+| `internal/evaluation` | 93.9% |
+| `cmd/api` | 0.0% (excluded) |
+| **Total** | **96.0%** |
+
 ## Docker
 
 Multi-stage `Dockerfile` at `cmd/api/build/Dockerfile`:

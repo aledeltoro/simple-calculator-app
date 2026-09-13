@@ -1,5 +1,7 @@
 # Simple Calculator
 
+[![codecov](https://codecov.io/github/aledeltoro/simple-calculator-app/graph/badge.svg?token=V45KDDC0HT)](https://codecov.io/github/aledeltoro/simple-calculator-app)
+
 Full-stack calculator app. A React frontend renders the UI and maps button gestures
 into expression strings; a Go backend parses and evaluates them. No math happens in
 the browser — the backend is the source of truth.
