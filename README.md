@@ -142,6 +142,13 @@ cd frontend && npm run test:coverage
 Coverage thresholds: backend uses `go test -cover`, frontend enforces **>85% lines**
 (currently 100%).
 
+## Coverage
+
+To learn more about the latest coverage report from each component (Backend and Frontend) inside the project, check their respective coverage:
+
+- [Backend coverage](backend/README.md#coverage)
+- [Frontend coverage](frontend/README.md#coverage)
+
 ## Project structure
 
 ```
