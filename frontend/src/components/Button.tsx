@@ -11,8 +11,6 @@ export interface ButtonProps {
   onClick: () => void;
   /** Styling variant. */
   variant?: ButtonVariant;
-  /** Span two grid columns (used by `0`). */
-  wide?: boolean;
 }
 
 /**
@@ -24,11 +22,8 @@ export default function Button({
   ariaLabel,
   onClick,
   variant = "default",
-  wide = false,
 }: ButtonProps) {
-  const className = [styles.button, styles[variant] ?? "", wide ? styles.wide : ""]
-    .filter(Boolean)
-    .join(" ");
+  const className = [styles.button, styles[variant] ?? ""].filter(Boolean).join(" ");
 
   return (
     <button type="button" className={className} aria-label={ariaLabel} onClick={onClick}>
