@@ -3,7 +3,7 @@
 ## Health
 
 <details>
- <summary><code>GET</code> <code><b>/</b></code> <code>(Checks if the service is healthy)</code></summary>
+ <summary><code>GET</code> <code><b>/health</b></code> <code>(Checks if the service is healthy)</code></summary>
 
 ### Parameters
 
@@ -24,7 +24,7 @@
 ## Calculate
 
 <details>
- <summary><code>POST</code> <code><b>/</b></code> <code>(Performs calculation based on raw mathematical expression)</code></summary>
+ <summary><code>POST</code> <code><b>/api/v1/calculations</b></code> <code>(Performs calculation based on raw mathematical expression)</code></summary>
 
 ### Request
 
@@ -42,7 +42,7 @@ Successful calculation
 
 ```json
 {
-  "result": "18.2"
+  "result": 18.2
 }
 ```
 
@@ -59,8 +59,8 @@ Successful calculation
 
 ```json
 {
-  "code": "internal_server_error",
-  "message": "internal server error"
+  "code": "internal_service_error",
+  "message": "Internal server error"
 }
 ```
 

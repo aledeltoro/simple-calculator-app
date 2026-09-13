@@ -9,6 +9,7 @@ import (
 	"github.com/aledeltoro/simple-calculator-app/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
 func main() {
@@ -16,6 +17,13 @@ func main() {
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://*"},
+		AllowedMethods:   []string{"GET", "POST"},
+		AllowedHeaders:   []string{"Accept", "Content-Type"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
 
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
