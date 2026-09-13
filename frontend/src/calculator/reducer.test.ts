@@ -177,16 +177,97 @@ describe("reducer", () => {
     expect(reducer(evaluating, { type: "evaluate" }).status).toBe("evaluating");
   });
 
-  it("ignores toggleSign/sqrt/percent when not idle", () => {
+  it("applies sqrt to a success result", () => {
     const success = reduce([
       { type: "append", token: "6" },
       { type: "evaluate" },
       { type: "success", result: 6 },
     ]);
 
-    expect(reducer(success, { type: "toggleSign" })).toBe(success);
-    expect(reducer(success, { type: "sqrt" })).toBe(success);
-    expect(reducer(success, { type: "percent" })).toBe(success);
+    const next = reducer(success, { type: "sqrt" });
+    expect(next).toMatchObject({
+      expression: "(6)^0.5",
+      display: "√6",
+      status: "idle",
+      result: null,
+      error: null,
+    });
+  });
+
+  it("applies percent to a success result", () => {
+    const success = reduce([
+      { type: "append", token: "6" },
+      { type: "evaluate" },
+      { type: "success", result: 6 },
+    ]);
+
+    const next = reducer(success, { type: "percent" });
+    expect(next).toMatchObject({
+      expression: "(6)/100",
+      display: "6%",
+      status: "idle",
+      result: null,
+    });
+  });
+
+  it("toggles the sign of a success result and back", () => {
+    const success = reduce([
+      { type: "append", token: "6" },
+      { type: "evaluate" },
+      { type: "success", result: 6 },
+    ]);
+
+    const negated = reducer(success, { type: "toggleSign" });
+    expect(negated).toMatchObject({
+      expression: "-6",
+      display: "−6",
+      status: "idle",
+      result: null,
+    });
+
+    const restored = reducer(negated, { type: "toggleSign" });
+    expect(restored).toMatchObject({
+      expression: "6",
+      display: "6",
+      status: "idle",
+      result: null,
+    });
+  });
+
+  it("ignores toggleSign/sqrt/percent while evaluating", () => {
+    const evaluatingReduced = reduce([
+      { type: "append", token: "6" },
+      { type: "evaluate" },
+    ]);
+
+    expect(reducer(evaluatingReduced, { type: "toggleSign" })).toBe(evaluatingReduced);
+    expect(reducer(evaluatingReduced, { type: "sqrt" })).toBe(evaluatingReduced);
+    expect(reducer(evaluatingReduced, { type: "percent" })).toBe(evaluatingReduced);
+  });
+
+  it("ignores toggleSign/sqrt/percent on error", () => {
+    const errored = reduce([
+      { type: "append", token: "1" },
+      { type: "evaluate" },
+      { type: "failure", message: "division by zero not allowed" },
+    ]);
+
+    expect(reducer(errored, { type: "toggleSign" })).toBe(errored);
+    expect(reducer(errored, { type: "sqrt" })).toBe(errored);
+    expect(reducer(errored, { type: "percent" })).toBe(errored);
+  });
+
+  it("stores the formatted decimal expression on success", () => {
+    const evaluating = reduce([{ type: "evaluate" }]);
+    const success = reducer(evaluating, {
+      type: "success",
+      result: 0.30000000000000004,
+    });
+    expect(success.expression).toBe("0.3");
+    expect(success.display).toBe("0.3");
+
+    const sqrt = reducer(success, { type: "sqrt" });
+    expect(sqrt.expression).toBe("(0.3)^0.5");
   });
 
   it("ignores toggleSign/sqrt/percent when there is no trailing operand", () => {

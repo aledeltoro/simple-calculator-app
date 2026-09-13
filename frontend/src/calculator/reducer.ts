@@ -101,7 +101,10 @@ export function reducer(state: CalculatorState, action: CalculatorAction): Calcu
     case "toggleSign":
     case "sqrt":
     case "percent": {
-      if (state.status !== "idle") {
+      // Allowed on a fresh pending expression ("idle") and on a successful
+      // result ("success") where the stored result expression is the trailing
+      // operand. Must not mutate mid-request ("evaluating") or on error.
+      if (state.status === "evaluating" || state.status === "error") {
         return state;
       }
       const last = splitLastOperand(state.expression);
@@ -118,11 +121,14 @@ export function reducer(state: CalculatorState, action: CalculatorAction): Calcu
         expression = `${last.prefix}${applyPercent(last.operand)}`;
       }
 
+      // The resulting expression is a fresh pending one.
       return {
         ...state,
         expression,
         display: toDisplay(expression) || "0",
         result: null,
+        error: null,
+        status: "idle",
       };
     }
 
@@ -148,9 +154,13 @@ export function reducer(state: CalculatorState, action: CalculatorAction): Calcu
     }
 
     case "success": {
+      // Store the formatted decimal (e.g. `0.3`, `6`) — not `String()`, which
+      // yields exponent notation (`1e+21`) for large/small results and would
+      // break `splitLastOperand` for a subsequent √/%/±.
+      const expression = formatResult(action.result);
       return {
-        expression: String(action.result),
-        display: formatResult(action.result),
+        expression,
+        display: expression,
         result: action.result,
         error: null,
         status: "success",
