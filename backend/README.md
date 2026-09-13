@@ -178,7 +178,6 @@ full integration within the handler boundary.
 Excludes `cmd/api/main.go` (wiring-only entry point, not unit-tested).
 Run `./scripts/coverage.sh` from `backend/` to regenerate.
 
-<!-- COVERAGE_START -->
 | Package | Coverage |
 |---|---|
 | `internal/api/handler` | 100.0% |
@@ -187,7 +186,6 @@ Run `./scripts/coverage.sh` from `backend/` to regenerate.
 | `internal/evaluation` | 93.9% |
 | `cmd/api` | 0.0% (excluded) |
 | **Total** | **96.0%** |
-<!-- COVERAGE_END -->
 
 ## Docker
 

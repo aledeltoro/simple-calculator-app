@@ -165,14 +165,12 @@ React Testing Library, `user-event`, `jest-dom`, and `jsdom`.
 Threshold enforced: **>85% lines** (configured in `vite.config.ts`).
 Run `./scripts/coverage.sh` from `frontend/` to regenerate.
 
-<!-- COVERAGE_START -->
 | Metric | Coverage |
 |---|---|
 | Statements | 100% (596/596) |
 | Branches | 98.22% (221/225) |
 | Functions | 88.46% (46/52) |
 | Lines | 100% (596/596) |
-<!-- COVERAGE_END -->
 
 ## Docker
 
