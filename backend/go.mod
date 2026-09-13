@@ -7,4 +7,7 @@ require (
 	github.com/stretchr/testify v1.12.1
 )
 
-require go.yaml.in/yaml/v3 v3.0.5 // indirect
+require (
+	github.com/go-chi/cors v1.2.2 // indirect
+	go.yaml.in/yaml/v3 v3.0.5 // indirect
+)
