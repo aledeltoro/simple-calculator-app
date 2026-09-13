@@ -40,6 +40,9 @@ export const initialState: CalculatorState = {
   status: "idle",
 };
 
+/** User-facing error when √ is pressed on a negated operand. */
+export const SQRT_NEGATIVE_MESSAGE = "can't take the square root of a negative number";
+
 export type CalculatorAction =
   | { type: "append"; token: ButtonToken }
   | { type: "toggleSign" }
@@ -110,6 +113,17 @@ export function reducer(state: CalculatorState, action: CalculatorAction): Calcu
       const last = splitLastOperand(state.expression);
       if (last === null) {
         return state;
+      }
+
+      // √ of a negated operand would be complex; reject client-side instead of
+      // sending `-(x)^0.5` to the backend. `±` and `%` keep working.
+      if (last.prefix.endsWith("-") && action.type === "sqrt") {
+        return {
+          ...state,
+          status: "error",
+          error: SQRT_NEGATIVE_MESSAGE,
+          result: null,
+        };
       }
 
       let expression: string;

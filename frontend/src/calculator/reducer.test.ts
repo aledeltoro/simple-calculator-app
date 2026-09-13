@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { initialState, reducer } from "./reducer";
+import { initialState, reducer, SQRT_NEGATIVE_MESSAGE } from "./reducer";
 import type { CalculatorState } from "./reducer";
 
 function reduce(actions: Parameters<typeof reducer>[1][]): CalculatorState {
@@ -231,6 +231,77 @@ describe("reducer", () => {
       display: "6",
       status: "idle",
       result: null,
+    });
+  });
+
+  it("rejects sqrt on a negated result", () => {
+    const success = reduce([
+      { type: "append", token: "6" },
+      { type: "evaluate" },
+      { type: "success", result: -2 },
+    ]);
+    expect(success.expression).toBe("-2");
+
+    const next = reducer(success, { type: "sqrt" });
+    expect(next).toMatchObject({
+      status: "error",
+      error: SQRT_NEGATIVE_MESSAGE,
+      result: null,
+    });
+    expect(next.expression).toBe("-2");
+  });
+
+  it("rejects sqrt on a grouped-but-negated operand", () => {
+    const negated = reduce([
+      { type: "append", token: "(" },
+      { type: "append", token: "3" },
+      { type: "append", token: "+" },
+      { type: "append", token: "4" },
+      { type: "append", token: ")" },
+      { type: "toggleSign" },
+    ]);
+    expect(negated.expression).toBe("-(3+4)");
+
+    const next = reducer(negated, { type: "sqrt" });
+    expect(next).toMatchObject({
+      status: "error",
+      error: SQRT_NEGATIVE_MESSAGE,
+      result: null,
+    });
+    expect(next.expression).toBe("-(3+4)");
+  });
+
+  it("applies percent to a negated result", () => {
+    const success = reduce([
+      { type: "append", token: "6" },
+      { type: "evaluate" },
+      { type: "success", result: -6 },
+    ]);
+
+    const next = reducer(success, { type: "percent" });
+    expect(next).toMatchObject({
+      expression: "-(6)/100",
+      display: "−6%",
+      status: "idle",
+      result: null,
+      error: null,
+    });
+  });
+
+  it("toggles the sign of a negated result back to positive", () => {
+    const success = reduce([
+      { type: "append", token: "6" },
+      { type: "evaluate" },
+      { type: "success", result: -6 },
+    ]);
+
+    const next = reducer(success, { type: "toggleSign" });
+    expect(next).toMatchObject({
+      expression: "6",
+      display: "6",
+      status: "idle",
+      result: null,
+      error: null,
     });
   });
 

@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { calculate } from "../api/client";
+import { SQRT_NEGATIVE_MESSAGE } from "../calculator/reducer";
 import App from "./App";
 
 // Mock the API client so `=` never hits the network (SPEC layering strategy).
@@ -142,5 +143,93 @@ describe("App", () => {
       "2^3",
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
+  });
+
+  it("applies sqrt to an evaluated result and sends (6)^0.5", async () => {
+    mockCalculate
+      .mockResolvedValueOnce({ kind: "success", result: 6 })
+      .mockResolvedValueOnce({ kind: "success", result: 2.449489742783178 });
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "2" }));
+    await user.click(screen.getByRole("button", { name: "multiply" }));
+    await user.click(screen.getByRole("button", { name: "3" }));
+    await user.click(screen.getByRole("button", { name: "equals" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("6"));
+
+    await user.click(screen.getByRole("button", { name: "square root" }));
+    expect(screen.getByRole("status")).toHaveTextContent("√6");
+
+    await user.click(screen.getByRole("button", { name: "equals" }));
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent("2.44948974278"),
+    );
+    expect(mockCalculate).toHaveBeenCalledWith(
+      "(6)^0.5",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
+  it("negates an evaluated result and sends -5", async () => {
+    mockCalculate
+      .mockResolvedValueOnce({ kind: "success", result: 5 })
+      .mockResolvedValueOnce({ kind: "success", result: -5 });
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "5" }));
+    await user.click(screen.getByRole("button", { name: "equals" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("5"));
+
+    await user.click(screen.getByRole("button", { name: "negate" }));
+    expect(screen.getByRole("status")).toHaveTextContent("−5");
+
+    await user.click(screen.getByRole("button", { name: "equals" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("-5"));
+    expect(mockCalculate).toHaveBeenCalledWith(
+      "-5",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
+  it("applies percent to an evaluated result and sends (7)/100", async () => {
+    mockCalculate
+      .mockResolvedValueOnce({ kind: "success", result: 7 })
+      .mockResolvedValueOnce({ kind: "success", result: 0.07 });
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "7" }));
+    await user.click(screen.getByRole("button", { name: "equals" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("7"));
+
+    await user.click(screen.getByRole("button", { name: "percent" }));
+    expect(screen.getByRole("status")).toHaveTextContent("7%");
+
+    await user.click(screen.getByRole("button", { name: "equals" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("0.07"));
+    expect(mockCalculate).toHaveBeenCalledWith(
+      "(7)/100",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
+  it("rejects sqrt on a negative result client-side without calling the API", async () => {
+    mockCalculate.mockResolvedValue({ kind: "success", result: -2 });
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "1" }));
+    await user.click(screen.getByRole("button", { name: "subtract" }));
+    await user.click(screen.getByRole("button", { name: "3" }));
+    await user.click(screen.getByRole("button", { name: "equals" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("-2"));
+    expect(mockCalculate).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByRole("button", { name: "square root" }));
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent(SQRT_NEGATIVE_MESSAGE);
+    expect(mockCalculate).toHaveBeenCalledTimes(1);
   });
 });
