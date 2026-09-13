@@ -1,0 +1,25 @@
+.display {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  text-align: right;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.expression {
+  font-size: clamp(1rem, 4vw, 1.25rem);
+  color: var(--color-text-muted);
+  min-height: 1.5em;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.value {
+  font-size: clamp(2rem, 10vw, 3rem);
+  line-height: 1.1;
+  font-weight: 700;
+  word-break: break-all;
+}

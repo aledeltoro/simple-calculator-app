@@ -1,0 +1,87 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { calculate } from "../api/client";
+import App from "./App";
+
+// Mock the API client so `=` never hits the network (SPEC layering strategy).
+vi.mock("../api/client", () => ({
+  calculate: vi.fn(),
+}));
+
+const mockCalculate = vi.mocked(calculate);
+
+beforeEach(() => {
+  mockCalculate.mockReset();
+});
+
+describe("App", () => {
+  it("renders the display with initial value 0", () => {
+    render(<App />);
+    expect(screen.getByRole("status")).toHaveTextContent("0");
+  });
+
+  it("updates the display when digit buttons are clicked", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "2" }));
+    await user.click(screen.getByRole("button", { name: "3" }));
+
+    expect(screen.getByRole("status")).toHaveTextContent("23");
+  });
+
+  it("appends an operator after a digit", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "2" }));
+    await user.click(screen.getByRole("button", { name: "add" }));
+
+    expect(screen.getByRole("status")).toHaveTextContent("2+");
+  });
+
+  it("evaluates 2×3 to 6 on equals", async () => {
+    mockCalculate.mockResolvedValue({ kind: "success", result: 6 });
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "2" }));
+    await user.click(screen.getByRole("button", { name: "multiply" }));
+    await user.click(screen.getByRole("button", { name: "3" }));
+    await user.click(screen.getByRole("button", { name: "equals" }));
+
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("6"));
+    expect(mockCalculate).toHaveBeenCalledWith(
+      "2*3",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
+  it("surfaces a bad_request error in the alert banner", async () => {
+    mockCalculate.mockResolvedValue({
+      kind: "bad_request",
+      message: "division by zero not allowed",
+    });
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "1" }));
+    await user.click(screen.getByRole("button", { name: "divide" }));
+    await user.click(screen.getByRole("button", { name: "0" }));
+    await user.click(screen.getByRole("button", { name: "equals" }));
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("division by zero not allowed");
+  });
+
+  it("clears the display back to 0", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "5" }));
+    await user.click(screen.getByRole("button", { name: "clear" }));
+
+    expect(screen.getByRole("status")).toHaveTextContent("0");
+  });
+});

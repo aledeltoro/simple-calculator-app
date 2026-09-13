@@ -1,0 +1,54 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px; /* ≥ 44px touch target */
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: clamp(1.25rem, 5vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1;
+  background: var(--color-key);
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+
+.button:hover {
+  filter: brightness(1.15);
+}
+
+.button:active {
+  transform: scale(0.96);
+  filter: brightness(1.1);
+}
+
+.button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.operator {
+  background: var(--color-operator);
+  color: var(--color-operator-text);
+}
+
+.function {
+  background: var(--color-function);
+}
+
+.clear {
+  background: var(--color-clear);
+  color: #ffffff;
+}
+
+.equals {
+  background: var(--color-equals);
+  color: #ffffff;
+}
+
+.wide {
+  grid-column: span 2;
+}

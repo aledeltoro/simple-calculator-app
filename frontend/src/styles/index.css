@@ -1,0 +1,73 @@
+/* ============================================================
+   Global reset + design tokens + base element styles.
+   Imported once (in `main.tsx`).
+   ============================================================ */
+
+:root {
+  /* Colors */
+  --color-bg: #0f1115;
+  --color-surface: #1a1d24;
+  --color-key: #2a2f3a;
+  --color-operator: #ff9f0a;
+  --color-operator-text: #1a1d24;
+  --color-function: #5b6474;
+  --color-clear: #e55b5b;
+  --color-equals: #34c759;
+  --color-text: #f5f6f8;
+  --color-text-muted: #9aa3b2;
+  --color-danger: #ff6b6b;
+  --color-danger-bg: rgba(255, 107, 107, 0.12);
+  --color-focus: #4da3ff;
+
+  /* Typography */
+  --font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+
+  /* Radii */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#root {
+  min-height: 100dvh;
+}
