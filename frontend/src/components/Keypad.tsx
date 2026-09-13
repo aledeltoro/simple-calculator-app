@@ -29,6 +29,7 @@ interface Key {
  *   4  5  6  −
  *   1  2  3  +
  *   0(wide) .  =
+ *   xʸ
  */
 export default function Keypad({
   append,
@@ -63,6 +64,7 @@ export default function Keypad({
     { label: "0", onPress: () => append("0"), wide: true },
     { label: ".", ariaLabel: "decimal point", onPress: () => append(".") },
     { label: "=", ariaLabel: "equals", onPress: evaluate, variant: "equals" },
+    { label: "xʸ", ariaLabel: "exponent", onPress: () => append("xʸ"), variant: "operator" },
   ];
 
   return (

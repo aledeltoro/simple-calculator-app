@@ -17,6 +17,7 @@ describe("mapOperator", () => {
     ["−", "-"],
     ["×", "*"],
     ["÷", "/"],
+    ["xʸ", "^"],
   ] as const)("maps %s → %s", (token, expected) => {
     expect(mapOperator(token)).toBe(expected);
   });

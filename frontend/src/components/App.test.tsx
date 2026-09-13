@@ -84,4 +84,63 @@ describe("App", () => {
 
     expect(screen.getByRole("status")).toHaveTextContent("0");
   });
+
+  it("shows a friendly sqrt symbol while sending the backend form", async () => {
+    mockCalculate.mockResolvedValue({ kind: "success", result: 3 });
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "9" }));
+    await user.click(screen.getByRole("button", { name: "square root" }));
+
+    expect(screen.getByRole("status")).toHaveTextContent("√9");
+
+    await user.click(screen.getByRole("button", { name: "equals" }));
+
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("3"));
+    expect(mockCalculate).toHaveBeenCalledWith(
+      "(9)^0.5",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
+  it("shows a friendly percent symbol while sending the backend form", async () => {
+    mockCalculate.mockResolvedValue({ kind: "success", result: 0.5 });
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "5" }));
+    await user.click(screen.getByRole("button", { name: "0" }));
+    await user.click(screen.getByRole("button", { name: "percent" }));
+
+    expect(screen.getByRole("status")).toHaveTextContent("50%");
+
+    await user.click(screen.getByRole("button", { name: "equals" }));
+
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("0.5"));
+    expect(mockCalculate).toHaveBeenCalledWith(
+      "(50)/100",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
+  it("shows the exponent key and sends the backend `^` form", async () => {
+    mockCalculate.mockResolvedValue({ kind: "success", result: 8 });
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "2" }));
+    await user.click(screen.getByRole("button", { name: "exponent" }));
+    await user.click(screen.getByRole("button", { name: "3" }));
+
+    expect(screen.getByRole("status")).toHaveTextContent("2^3");
+
+    await user.click(screen.getByRole("button", { name: "equals" }));
+
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("8"));
+    expect(mockCalculate).toHaveBeenCalledWith(
+      "2^3",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
 });

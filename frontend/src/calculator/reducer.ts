@@ -8,6 +8,7 @@
  * Boundary rule: `calculator/` imports nothing from React, `api/`, or `hooks/`.
  */
 
+import { toDisplay } from "./display";
 import { formatResult } from "./formatters";
 import {
   appendDecimalPoint,
@@ -51,7 +52,9 @@ export type CalculatorAction =
   | { type: "failure"; message: string };
 
 function isOperatorToken(token: ButtonToken): token is OperatorToken {
-  return token === "+" || token === "−" || token === "×" || token === "÷";
+  return (
+    token === "+" || token === "−" || token === "×" || token === "÷" || token === "xʸ"
+  );
 }
 
 /** After a successful evaluation, an operator chains onto the result, while
@@ -88,7 +91,7 @@ export function reducer(state: CalculatorState, action: CalculatorAction): Calcu
 
       return {
         expression,
-        display: expression || "0",
+        display: toDisplay(expression) || "0",
         result: null,
         error: null,
         status: "idle",
@@ -118,7 +121,7 @@ export function reducer(state: CalculatorState, action: CalculatorAction): Calcu
       return {
         ...state,
         expression,
-        display: expression || "0",
+        display: toDisplay(expression) || "0",
         result: null,
       };
     }
@@ -131,7 +134,7 @@ export function reducer(state: CalculatorState, action: CalculatorAction): Calcu
       return {
         ...state,
         expression,
-        display: expression || "0",
+        display: toDisplay(expression) || "0",
         result: null,
         error: null,
       };

@@ -1,4 +1,5 @@
 import { useCalculator } from "../hooks/useCalculator";
+import { toDisplay } from "../calculator/display";
 import Display from "./Display";
 import ErrorBanner from "./ErrorBanner";
 import Keypad from "./Keypad";
@@ -15,7 +16,7 @@ export default function App() {
   return (
     <main className={styles.app}>
       <h1 className={styles.title}>Simple Calculator</h1>
-      <Display display={state.display} expression={state.expression} />
+      <Display display={state.display} expression={toDisplay(state.expression)} />
       <ErrorBanner message={state.status === "error" ? state.error : null} />
       <Keypad
         append={append}

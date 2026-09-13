@@ -32,6 +32,28 @@ describe("reducer", () => {
       { type: "append", token: "3" },
     ]);
     expect(state.expression).toBe("2*3");
+    expect(state.display).toBe("2×3");
+  });
+
+  it("maps the exponent operator to the backend `^` symbol", () => {
+    const state = reduce([
+      { type: "append", token: "2" },
+      { type: "append", token: "xʸ" },
+      { type: "append", token: "3" },
+    ]);
+    expect(state.expression).toBe("2^3");
+    expect(state.display).toBe("2^3");
+  });
+
+  it("chains the exponent operator onto a success result", () => {
+    const success = reduce([
+      { type: "append", token: "6" },
+      { type: "evaluate" },
+      { type: "success", result: 6 },
+    ]);
+    const chained = reducer(success, { type: "append", token: "xʸ" });
+    expect(chained.status).toBe("idle");
+    expect(chained.expression).toBe("6^");
   });
 
   it("disambiguates a leading decimal point", () => {
@@ -45,6 +67,7 @@ describe("reducer", () => {
       { type: "sqrt" },
     ]);
     expect(state.expression).toBe("(9)^0.5");
+    expect(state.display).toBe("√9");
   });
 
   it("applies percent to the last operand", () => {
@@ -54,6 +77,7 @@ describe("reducer", () => {
       { type: "percent" },
     ]);
     expect(state.expression).toBe("(50)/100");
+    expect(state.display).toBe("50%");
   });
 
   it("toggles the sign of the last operand", () => {

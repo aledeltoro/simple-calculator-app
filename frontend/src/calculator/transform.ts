@@ -9,6 +9,7 @@ export const OPERATOR_MAP = {
   "−": "-",
   "×": "*",
   "÷": "/",
+  "xʸ": "^",
 } as const;
 
 export type OperatorToken = keyof typeof OPERATOR_MAP;
