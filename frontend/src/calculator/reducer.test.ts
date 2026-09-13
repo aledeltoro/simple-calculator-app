@@ -152,4 +152,32 @@ describe("reducer", () => {
     const evaluating = reduce([{ type: "evaluate" }]);
     expect(reducer(evaluating, { type: "evaluate" }).status).toBe("evaluating");
   });
+
+  it("ignores toggleSign/sqrt/percent when not idle", () => {
+    const success = reduce([
+      { type: "append", token: "6" },
+      { type: "evaluate" },
+      { type: "success", result: 6 },
+    ]);
+
+    expect(reducer(success, { type: "toggleSign" })).toBe(success);
+    expect(reducer(success, { type: "sqrt" })).toBe(success);
+    expect(reducer(success, { type: "percent" })).toBe(success);
+  });
+
+  it("ignores toggleSign/sqrt/percent when there is no trailing operand", () => {
+    expect(reducer(initialState, { type: "toggleSign" })).toBe(initialState);
+    expect(reducer(initialState, { type: "sqrt" })).toBe(initialState);
+    expect(reducer(initialState, { type: "percent" })).toBe(initialState);
+  });
+
+  it("resets to the initial state when backspacing after a result", () => {
+    const success = reduce([
+      { type: "append", token: "6" },
+      { type: "evaluate" },
+      { type: "success", result: 6 },
+    ]);
+
+    expect(reducer(success, { type: "backspace" })).toEqual(initialState);
+  });
 });

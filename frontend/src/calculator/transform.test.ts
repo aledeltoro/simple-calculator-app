@@ -108,6 +108,11 @@ describe("splitLastOperand", () => {
   it("disambiguates a bare leading dot", () => {
     expect(splitLastOperand(".5")).toEqual({ prefix: "", operand: "0.5", grouped: false });
   });
+
+  it("returns null for an unmatched closing paren", () => {
+    expect(splitLastOperand(")")).toBeNull();
+    expect(splitLastOperand("1)")).toBeNull();
+  });
 });
 
 describe("toggleSignExpression", () => {

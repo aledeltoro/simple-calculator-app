@@ -64,6 +64,15 @@ describe("calculate", () => {
     });
   });
 
+  it("resolves `bad_request` with a fallback message when the body lacks one", async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse(400, { code: "bad_request" }));
+
+    await expect(calculate("2 + 2")).resolves.toEqual({
+      kind: "bad_request",
+      message: "Invalid request",
+    });
+  });
+
   it("resolves `server` on a 500 error", async () => {
     mockFetch.mockResolvedValueOnce(
       jsonResponse(500, {
@@ -96,6 +105,45 @@ describe("calculate", () => {
     mockFetch.mockRejectedValueOnce(new TypeError("Failed to fetch"));
 
     await expect(calculate("2 + 2")).resolves.toEqual({ kind: "network" });
+  });
+
+  it("resolves `network` when fetch rejects with a non-Error value", async () => {
+    mockFetch.mockRejectedValueOnce(null);
+
+    await expect(calculate("2 + 2")).resolves.toEqual({ kind: "network" });
+  });
+
+  it("falls back to the internal timeout signal when AbortSignal.any is unavailable", async () => {
+    // jsdom does not implement `AbortSignal.any`, so an external signal takes
+    // the fallback branch (return the standalone timeout signal).
+    mockFetch.mockResolvedValueOnce(jsonResponse(200, { result: 1 }));
+    const controller = new AbortController();
+
+    await calculate("1 + 1", { signal: controller.signal });
+
+    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    expect(init.signal).toBeDefined();
+    expect(init.signal).not.toBe(controller.signal);
+  });
+
+  it("merges an external signal via AbortSignal.any when available", async () => {
+    const anySpy = vi.fn((signals: AbortSignal[]) => signals[0] ?? signals[1]);
+    const originalAny = AbortSignal.any;
+    // @ts-expect-error — override to exercise the modern-runtime merge branch
+    AbortSignal.any = anySpy;
+
+    try {
+      mockFetch.mockResolvedValueOnce(jsonResponse(200, { result: 1 }));
+      const controller = new AbortController();
+
+      await calculate("1 + 1", { signal: controller.signal });
+
+      expect(anySpy).toHaveBeenCalledTimes(1);
+      const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+      expect(init.signal).toBeDefined();
+    } finally {
+      AbortSignal.any = originalAny;
+    }
   });
 
   it("resolves `timeout` when fetch rejects with a TimeoutError", async () => {

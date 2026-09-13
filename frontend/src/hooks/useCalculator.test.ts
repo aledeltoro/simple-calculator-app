@@ -263,6 +263,43 @@ describe("useCalculator", () => {
     expect(result.current.state.error).toBe("Internal server error");
   });
 
+  it("ignores a stale rejection when a newer evaluation supersedes it", async () => {
+    const first = deferred<ApiResult>();
+    const second = deferred<ApiResult>();
+    mockCalculate
+      .mockImplementationOnce(() => first.promise)
+      .mockImplementationOnce(() => second.promise);
+
+    const { result } = renderHook(() => useCalculator());
+    act(() => {
+      result.current.append("1");
+    });
+    act(() => {
+      result.current.evaluate();
+    });
+    act(() => {
+      result.current.clear();
+    });
+    act(() => {
+      result.current.append("2");
+    });
+    act(() => {
+      result.current.evaluate();
+    });
+
+    // The stale first request rejects after being superseded — must be ignored.
+    await act(async () => {
+      first.reject(new Error("stale"));
+    });
+    expect(result.current.state.status).toBe("evaluating");
+
+    await act(async () => {
+      second.resolve({ kind: "success", result: 2 });
+    });
+    expect(result.current.state.result).toBe(2);
+    expect(result.current.state.status).toBe("success");
+  });
+
   it("aborts an in-flight request on unmount", () => {
     mockCalculate.mockImplementation(() => new Promise<ApiResult>(() => {}));
 
