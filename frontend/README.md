@@ -52,6 +52,27 @@ directly. There is deliberately no Vite `server.proxy` and no nginx `proxy_pass`
 | `npm run test` | Run Vitest once in watch mode. |
 | `npm run test:coverage` | Run Vitest once with v8 coverage and enforce the threshold. |
 
+## Design Decisions
+
+### Stack
+
+| Concern | Choice | Rationale |
+|---|---|---|
+| Build | **Vite** (`react-ts`) | Minimal config, modern ESM, fast dev. No SSR/routing needs. |
+| Language | **TypeScript (strict)** | Typed API contracts; strict flags (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`) enforced. |
+| Test | **Vitest + React Testing Library + user-event + jest-dom + jsdom** | Same Vite ecosystem; fast; built-in `expect`. |
+| Coverage | **@vitest/coverage-v8** | Native provider; `text`/`html`/`lcov`. |
+| Styling | **CSS Modules** | Scoped, zero deps, fits ~5 components. Design tokens via CSS custom properties. |
+| State | **`useReducer` in a hook** | Single view; no Redux/Zustand needed. |
+
+Deliberately avoided: routers, UI kits, CSS frameworks, schema/validation libs, state libs.
+
+### Responsive
+
+- Mobile-first single column, `max-width` ~420px.
+- Keypad = CSS Grid `repeat(4, 1fr)`; touch targets ≥ 44px.
+- Fluid type via `clamp()`; design tokens (colors/fonts/spacing/radius) in `global.css`.
+
 ## Architecture
 
 The codebase is layered so that pure logic is fully unit-testable in isolation.
